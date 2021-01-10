@@ -227,12 +227,20 @@ class App extends React.Component {
   //   ]
   // };
 
+
   constructor(props){
     super();
+    const queryString = window.location.search;
+    console.log(queryString);
+    const urlParams = new URLSearchParams(queryString);
+    const awc_id = urlParams.get('awc_id');
+    console.log(awc_id);
     this.state = {
-      anganWadiId: '4c051f983ece4078a666c6f0127acbc3',
+      anganWadiId: awc_id,
       anganWadiData: {}};
   }
+
+  
 
   componentDidMount () {
     const URL = `http://localhost:3000/api/awc/${this.state.anganWadiId}`;
