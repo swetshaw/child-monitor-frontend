@@ -231,10 +231,8 @@ class App extends React.Component {
   constructor(props){
     super();
     const queryString = window.location.search;
-    console.log(queryString);
     const urlParams = new URLSearchParams(queryString);
     const awc_id = urlParams.get('awc_id');
-    console.log(awc_id);
     this.state = {
       anganWadiId: awc_id,
       anganWadiData: {}};
