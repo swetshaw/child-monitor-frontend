@@ -5,32 +5,47 @@ import GammelTheme from 'fusioncharts/themes/fusioncharts.theme.gammel';
 import ReactFC from 'react-fusioncharts';
 
 ReactFC.fcRoot(FusionCharts, Charts, GammelTheme);
-
+function goodEmptyCheck(value) {
+    return Object.keys(value).length === 0
+      && value.constructor === Object; // 👈 constructor check
+  }
 
 export default class DashBoard extends React.Component {
 
   constructor(props){
     super();
     this.state = {
-      childId: props.childId,
-      childLineChartData: props.childLineChartData
+      childId: props.childId
     };
   }
 
-  render () {
+  handleChildIdChange = (e) => {
+    this.setState({childId: e.target.value });
+  }
 
-    const ChildGrowthChartdataSource = {
+  render () {
+      let childId = this.state.childId || this.props.childId, anganWadiData = this.props.anganWadiData || {}, childData = {}, childLineChartData = {}, ChildGrowthChartdataSource = {}, childrenIdOptions = [];
+    if (!goodEmptyCheck(anganWadiData)) {
+        childData = anganWadiData[childId];
+        childLineChartData = childData.map((Obj) => {
+            return {
+              label: Obj.month,
+              value: Obj.weight
+            };
+          });
+          childrenIdOptions = Object.keys(anganWadiData);
+    }
+    ChildGrowthChartdataSource = {
       chart: {
         caption: "Child Growth Chart",
         yaxisname: "Weight (in kgs)",
         theme: "gammel"
       },
-      data: this.state.childLineChartData
+      data: childLineChartData
     };
-
     const LinechartConfigs = {
       type: 'line',
-      width: "65%",
+      width: "95%",
       height: 400,
       dataFormat: 'json',
       dataSource: ChildGrowthChartdataSource
@@ -39,11 +54,20 @@ export default class DashBoard extends React.Component {
     return (
       <center>
         <br />
-        <h2>
-          Child Health Monitoring DashBoard
-        </h2>
+        <h1>Child Health Monitoring DashBoard</h1>
         <br />
-        <ReactFC {...LinechartConfigs} />
+        <div className="dashboard-container">
+          <div className="dashboard-operator">
+            <select className="child-id-selector" onChange={this.handleChildIdChange}>
+              {
+                childrenIdOptions.map((val)=> <option value={val}>{val}</option>)
+              }
+            </select>
+          </div>
+          <div className="childGrowth-chart-container">
+            <ReactFC {...LinechartConfigs} />
+          </div>
+        </div>
       </center>
     );
   }
